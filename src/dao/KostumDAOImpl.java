@@ -59,6 +59,12 @@ public class KostumDAOImpl implements KostumDAO {
             if (affected == 0) {
                 throw new RuntimeException("Stok tidak mencukupi atau kostum tidak ditemukan!");
             }
+
+            try (PreparedStatement stmt2 = conn.prepareStatement(
+                    "UPDATE kostum SET keterangan = 'Stok Habis' WHERE id = ? AND stok = 0")) {
+                stmt2.setInt(1, id);
+                stmt2.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Gagal memproses sewa: " + e.getMessage(), e);
         }
@@ -136,9 +142,10 @@ public class KostumDAOImpl implements KostumDAO {
         k.setNamaKarakter(rs.getString("nama_karakter"));
         k.setUkuran(rs.getString("ukuran"));
         k.setKategori(rs.getString("kategori"));
-        k.setStok(rs.getInt("stok"));
+        int stok = rs.getInt("stok");
+        k.setStok(stok);
         k.setHargaSewa(rs.getDouble("harga_sewa"));
-        k.setKeterangan(rs.getString("keterangan"));
+        k.setKeterangan(stok == 0 ? "Stok Habis" : "Tersedia");
         return k;
     }
 }

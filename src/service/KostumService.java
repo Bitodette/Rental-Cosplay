@@ -23,7 +23,7 @@ public class KostumService {
         if (kostum.getHargaSewa() < 0)
             throw new IllegalArgumentException("Harga sewa tidak boleh negatif!");
 
-        kostum.setKeterangan("Tersedia");
+        kostum.setKeterangan(kostum.getStok() == 0 ? "Stok Habis" : "Tersedia");
         kostumDAO.tambahKostum(kostum);
     }
 
@@ -41,6 +41,7 @@ public class KostumService {
         if (existing == null)
             throw new IllegalArgumentException("Kostum dengan ID " + kostum.getId() + " tidak ditemukan!");
 
+        kostum.setKeterangan(kostum.getStok() == 0 ? "Stok Habis" : "Tersedia");
         kostumDAO.updateKostum(kostum);
     }
 
